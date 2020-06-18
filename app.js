@@ -8,7 +8,7 @@ app.use(express.static("./public"));
 app.use(express.urlencoded({ extended: true}));
 app.use(express.json());
 
-require("./controllers/workout-controller.js")(app);
+//require("./controllers/workout-controller.js")(app);
 
 app.listen(PORT, function () {
     console.log("App listening on PORT " + PORT);
