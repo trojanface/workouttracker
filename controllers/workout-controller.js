@@ -20,7 +20,8 @@ router.put("/api/workouts/:id", ({ body }, res) => {
             if (error) {
                 console.log(error);
             } else {
-                console.log(success);
+                console.log("success");
+                res.json(success);
             }});
 
           // WorkoutDB.insert(body).then(dbTrans => {//need to change this from insert to an update
