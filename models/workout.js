@@ -4,30 +4,46 @@ const Schema = mongoose.Schema;
 
 const WorkoutSchema = new Schema({
     day: {
-        type: Date,
+        $type: Date,
         default: Date.now
     },
-    exersises: [
+    exercises: [
         {
-            type: {
-                type: String,
-                required: true
-            },
-            name: {
-                type: String,
-                required: true
-            },
-            duration: {
-                type: String,
-                required: true
-            },
-            weight: String,
-            reps: String,
-            sets: String,
-            distance: String
+            type: String,
+            name: String,
+            duration: Number,
+            weight: Number,
+            reps: Number,
+            sets: Number,
+            distance: Number
         }
-    ]
-});
+    ],
+     totalDuration: {$type: Number}
+},
+{typeKey: "$type"});
+
+// WorkoutSchema.pre("find", function() {
+//     if (this.exercises.length != 0) {
+//     // let totalDuratio = 0;
+//     //     this.exercises.forEach(element => {
+//     //         totalDuratio += element.duration;
+//     //     });
+        
+//        this.totalDuration = 163;
+//        console.log("hook "+this.totalDuration);
+//     }
+     
+// })
+
+
+// methods.totalDurationCalc = function(data) {
+//     console.log("running");
+// //     let totalDuratio = 0;
+// //     this.exercises.forEach(element => {
+// //         totalDuratio += element.duration;
+// //     });
+// //    return this.totalDuration = totalDuratio;
+//   };
 
 const Workout = mongoose.model("Workout", WorkoutSchema);
 
