@@ -10,13 +10,9 @@ router.post("/api/workouts", ({ body }, res) => {
     });
 });
 
-router.put("/api/workouts/:id", ({ body }, res) => {
-    console.log(body);//Needs to find the appropriate workout (using id) then add the body to the excersises of the workout
+router.put("/api/workouts/:id", (req, res) => {
 
-
-    WorkoutDB.find({}).sort({day: "descending"}).limit(1).then(result => {
-         console.log(result[0]._id);
-         WorkoutDB.findOneAndUpdate({_id: result[0]._id}, {$push:{exercises:body}, $inc: {totalDuration: body.duration}}, function (error, success) {
+         WorkoutDB.findOneAndUpdate({_id: req.params.id}, {$push:{exercises:req.body}, $inc: {totalDuration: req.body.duration}}, function (error, success) {
             if (error) {
                 console.log(error);
             } else {
@@ -29,7 +25,7 @@ router.put("/api/workouts/:id", ({ body }, res) => {
     // }).catch(err => {
     //     res.status(400).json(err);
     // });
-    });
+
 });
 
 // router.get("/:id", (req,res) => {
