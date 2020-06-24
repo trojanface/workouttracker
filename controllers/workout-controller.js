@@ -59,6 +59,10 @@ router.get("/stats", (req, res) => {//returns the stats page when called for
         });
 });
 
+router.get("/", (req, res) => {//returns the exercise page when called for
+    res.sendFile(path.join(__dirname, "../public/exercise.html"));
+});
+
 
 router.get("/exercise", (req, res) => {//returns the exercise page when called for
     res.sendFile(path.join(__dirname, "../public/exercise.html"));
