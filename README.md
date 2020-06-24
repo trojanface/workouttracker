@@ -8,7 +8,7 @@ A webpage that records your workouts and tracks the total distance/kilograms you
 ![A screenshot of Workout Tracker](screenshot1.png)
 
 ## Link to Deployed App
-https://f
+https://workout-tracker-bootcamp.herokuapp.com/
 
 ## Installation
 1. Navigate to deployed app to use.
