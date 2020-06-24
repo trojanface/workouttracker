@@ -2,80 +2,65 @@ const router = require("express").Router();
 const WorkoutDB = require("../models/workout.js");
 let path = require("path");
 
-router.post("/api/workouts", ({ body }, res) => {
-    WorkoutDB.create(body).then(dbTrans => {
-        res.json(dbTrans);
-    }).catch( err => {
-        res.status(400).json(err);
+router.post("/api/workouts", ({ body }, res) => {//is accessed when the user accesses the create new exercise screen
+    WorkoutDB.create(body).then(dbTrans => {//creates a new workout in the workout database
+        res.json(dbTrans); //returns the new entry
+    }).catch(err => {
+        res.status(400).json(err); //catch any errors
     });
 });
 
-router.put("/api/workouts/:id", (req, res) => {
-
-         WorkoutDB.findOneAndUpdate({_id: req.params.id}, {$push:{exercises:req.body}, $inc: {totalDuration: req.body.duration}}, function (error, success) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log("success");
-                res.json(success);
-            }});
-
-          // WorkoutDB.insert(body).then(dbTrans => {//need to change this from insert to an update
-    //     res.json(dbTrans);
-    // }).catch(err => {
-    //     res.status(400).json(err);
-    // });
-
+router.put("/api/workouts/:id", (req, res) => {//is accessed when workout information is sent to the controller
+    //finds the workout referenced in the url and then pushes the exercise information into the appropriate array and adds the duration to the entry.
+    WorkoutDB.findOneAndUpdate({ _id: req.params.id }, { $push: { exercises: req.body }, $inc: { totalDuration: req.body.duration } }, function (error, success) {
+        if (error) {
+            res.status(400).json(err); //catch any errors
+        } else {
+            res.json(success); //returns the success object
+        }
+    });
 });
 
-// router.get("/:id", (req,res) => {
-//     WorkoutDB.find({_id: req.params.id}).then(dbtrans => {
-//         res.json(dbtrans);
-//     })
-//     .catch(err => {
-//         res.status(400).json(err);
-//     });
-// });
 
-router.get("/api/workouts", (req,res) => {
-    WorkoutDB.find({})
-    .sort({ date: -1 })
-    .then(dbtrans => {
-        let totalDuration = 0;
-        dbtrans[dbtrans.length-1].exercises.forEach(element => {
-            totalDuration += element.duration;
+router.get("/api/workouts", (req, res) => {//access the most recent exercise entry
+    WorkoutDB.find({})//get all entries
+        .sort({ day: 1 })//arrange them in descending order
+        .then(dbtrans => {//we only access the most recent entry
+            let totalDuration = 0;
+            dbtrans[dbtrans.length - 1].exercises.forEach(element => {//for each exercise add the duration and set the total
+                totalDuration += element.duration;
+            });
+            dbtrans[dbtrans.length - 1].totalDuration = totalDuration;
+            res.json(dbtrans);//returns the new entry
+        })
+        .catch(err => {
+            res.status(400).json(err); //catch any errors
         });
-        dbtrans[dbtrans.length-1].totalDuration = totalDuration;
-        console.log(dbtrans[dbtrans.length-1]);
-        res.json(dbtrans);
-    })
-    .catch(err => {
-        res.status(400).json(err);
-    });
-});
-
-router.get("/api/workouts/range", (req,res) => {
-    WorkoutDB.find({})
-    .then(dbtrans => {
-        res.json(dbtrans);
-    })
-    .catch(err => {
-        res.status(400).json(err);
-    });
-});
-
-router.get("/stats", (req,res) => {
-    WorkoutDB.find({})
-    .then(dbtrans => {
-        res.sendFile(path.join(__dirname, "../public/stats.html"));
-    })
-    .catch(err => {
-        res.status(400).json(err);
-    });
 });
 
 
-router.get("/exercise", (req,res) => {
+router.get("/api/workouts/range", (req, res) => {//access the range query
+    WorkoutDB.find({day: {$lte: Date.now(), $gte: new Date().setDate(new Date().getDate()-7)}})//pulls exercises from the last 7 days. (NOTE: That the stats.js interprets this data and displays only the last 7 entries regardless of what day they were on...)
+        .then(dbtrans => {
+            res.json(dbtrans);
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        });
+});
+
+router.get("/stats", (req, res) => {//returns the stats page when called for
+    WorkoutDB.find({})//returns all entries
+        .then(dbtrans => {
+            res.sendFile(path.join(__dirname, "../public/stats.html"));
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        });
+});
+
+
+router.get("/exercise", (req, res) => {//returns the exercise page when called for
     res.sendFile(path.join(__dirname, "../public/exercise.html"));
 });
 
